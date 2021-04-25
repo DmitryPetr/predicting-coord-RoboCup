@@ -36,7 +36,7 @@ for item in teams:
 
 # задаётся по какому игроку нужно получить результат
 needTeam = teams[0]
-needPlayer = 0
+needPlayer = 1
 # TODO - доделать пресказание для мяча!
 
 for item in teams:
@@ -447,11 +447,11 @@ print('_______')
 # print(resultPredictStatisticDF)
 
 entropyName = randint(1000, 100000)
-resultDF.to_csv(str(entropyName) + 'resultCalc.csv')
-resultStatisticDF.to_csv(str(entropyName) + 'resultStatistic.csv')
+# resultDF.to_csv(str(entropyName) + 'resultCalc.csv')
+# resultStatisticDF.to_csv(str(entropyName) + 'resultStatistic.csv')
 
-# resultDF.to_csv(needTeam + '_' + str(needPlayer) + '_resultCalc.csv')
-# resultStatisticDF.to_csv(needTeam + '_' + str(needPlayer) + '_resultStatistic.csv')
+resultDF.to_csv(needTeam + '_' + str(needPlayer) + '_resultCalc.csv')
+resultStatisticDF.to_csv(needTeam + '_' + str(needPlayer) + '_resultStatistic.csv')
 
 #resultPredictDF.to_csv(str(entropyName) + 'resultPredict.csv')
 # resultPredictStatisticDF.to_csv(str(entropyName) + 'resultPredictStatistic.csv')
@@ -459,10 +459,18 @@ resultStatisticDF.to_csv(str(entropyName) + 'resultStatistic.csv')
 
 #
 
-resultPredictLessTwoDF.to_csv(str(entropyName) + 'resultPredictLessTwo.csv')
-resultPredictFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictFromTwoToFive.csv')
-resultPredictMoreFiveDF.to_csv(str(entropyName) + 'resultPredictMoreFive.csv')
+# resultPredictLessTwoDF.to_csv(str(entropyName) + 'resultPredictLessTwo.csv')
+# resultPredictFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictFromTwoToFive.csv')
+# resultPredictMoreFiveDF.to_csv(str(entropyName) + 'resultPredictMoreFive.csv')
+#
+# resultPredictStatisticLessTwoDF.to_csv(str(entropyName) + 'resultPredictStatisticLessTwo.csv')
+# resultPredictStatisticFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictStatisticFromTwoToFive.csv')
+# resultPredictStatisticMoreFiveDF.to_csv(str(entropyName) + 'resultPredictStatisticMoreFive.csv')
 
-resultPredictStatisticLessTwoDF.to_csv(str(entropyName) + 'resultPredictStatisticLessTwo.csv')
-resultPredictStatisticFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictStatisticFromTwoToFive.csv')
-resultPredictStatisticMoreFiveDF.to_csv(str(entropyName) + 'resultPredictStatisticMoreFive.csv')
+resultPredictLessTwoDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictLessTwo.csv')
+resultPredictFromTwoToFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictFromTwoToFive.csv')
+resultPredictMoreFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictMoreFive.csv')
+
+resultPredictStatisticLessTwoDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticLessTwo.csv')
+resultPredictStatisticFromTwoToFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticFromTwoToFive.csv')
+resultPredictStatisticMoreFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticMoreFive.csv')
