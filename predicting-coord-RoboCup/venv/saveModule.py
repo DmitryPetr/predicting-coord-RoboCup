@@ -30,7 +30,7 @@ class infoForTick:
 
 class storeAgent:
     def __init__(self):
-        self.storeCoord = deque([], maxlen=10)
+        self.storeCoord = deque([], maxlen=5)
         self.removePlayer = {}
 
     def addNewTickInfo(self, newInfo):
@@ -51,6 +51,16 @@ class storeAgent:
 
     def getLastItem(self):
         return self.storeCoord[len(self.storeCoord)-1] if len(self.storeCoord) > 0 else None
+
+    def getItemAt(self, index):
+        if len(self.storeCoord) <= 0:
+            return None
+        if index >= len(self.storeCoord) and index < 0:
+            return None
+        return self.storeCoord[index]
+
+    def getLength(self):
+        return len(self.storeCoord)
 
     def removeList(self):
         remove = []

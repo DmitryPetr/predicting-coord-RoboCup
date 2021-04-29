@@ -1,7 +1,7 @@
 import pandas as pd
 from config import Flags
 import numpy as np
-from config import Flags, resultColumn, teams, pathDefault
+from config import Flags, resultColumn, teams, pathDefault, prefixFiles, numberTeamGoalie
 
 def Remove_Null_or_NAN_Columns(df):
     dff = pd.DataFrame()
@@ -17,12 +17,10 @@ def Remove_Null_or_NAN_Columns(df):
             dff[cl] = df[cl]
     return dff
 
-def Find_All_Flags(series, team, ind):
+def Find_All_Flags(series):
     resArr = []
     for index, value in series.items():
-        #print('__________________________')
         if index != '# time' and index.find(' dist') != -1 and index.find('f ') != -1 and value != 'NAN':
-            #print('find to flag series', index, value)
             resArr.append({
                 'column': index,
                 'dist': value,
@@ -32,17 +30,25 @@ def Find_All_Flags(series, team, ind):
     return resArr
 
 
-def Find_All_Player(series):
+def Find_All_Object(series):
     resArr = []
+    resBallArr = []
     for index, value in series.items():
-        if index != '# time' and index.find(' dist') != -1 and (index.find('p ') != -1 ) and value != 'NAN':
+        if index != '# time' and index.find(' dist') != -1 and (index.find('p ') != -1 or index.find('b ') != -1) and value != 'NAN':
             resArr.append({
                 'column': index,
                 'dist': value,
             })
-        if index != '# time' and index.find(' angle') != -1 and index.find('p ') != -1 and value != 'NAN':
+        if index != '# time' and index.find(' angle') != -1 and (index.find('p ') != -1 or index.find('b ') != -1) and value != 'NAN':
             resArr[len(resArr)-1]['angle'] = value
-    return resArr
+        if index != '# time' and index.find(' dist') != -1 and (index.find('b ') != -1) and value != 'NAN':
+            resBallArr.append({
+                'column': index,
+                'dist': value,
+            })
+        if index != '# time' and index.find(' angle') != -1 and index.find('b ') != -1 and value != 'NAN':
+            resBallArr[len(resArr) - 1]['angle'] = value
+    return {'plArr': resArr, 'ballArr': resBallArr}
 
 def getAnswerForThreeFlags(flagOneCoord, flagTwoCoord, flagThreeCoord, distFOne, distFTwo, distFThree):
     coords = []
@@ -57,22 +63,16 @@ def getAnswerForThreeFlags(flagOneCoord, flagTwoCoord, flagThreeCoord, distFOne,
     answer = None
     if (coords[0]['x'] == coords[1]['x']):
       answer = coordsForSeemX(coords, distance, 0, 1, 2)
-      #print('coords[0][x] == coords[1][]', answer)
     elif (coords[0]['x'] == coords[2]['x']):
       answer = coordsForSeemX(coords, distance, 0, 2, 1)
-      #print('coords[0][x] == coords[2][]', answer)
     elif (coords[1]['x'] == coords[2]['x']):
       answer = coordsForSeemX(coords, distance, 1, 2, 0)
-      #print('coords[1][x] == coords[2][]', answer)
     elif (coords[0]['y'] == coords[1]['y']):
       answer = this.coordsForSeemY(coords, distance, 0, 1, 2)
-      #print('coords[0][y] == coords[1][]', answer)
     elif (coords[0]['y'] == coords[2]['y']):
       answer = coordsForSeemY(coords, distance, 0, 2, 1)
-     # print('coords[0][y] == coords[2][]', answer)
     elif (coords[1]['y'] == coords[2]['y']):
       answer = coordsForSeemY(coords, distance, 1, 2, 0)
-      #print('coords[1][y] == coords[2][]', answer)
     else:
       alpha1 = (coords[0]['y'] - coords[1]['y']) / (coords[1]['x'] - coords[0]['x'])
       beta1 = (coords[1]['y']**2 - coords[0]['y']**2 + coords[1]['x']**2 - coords[0]['x']**2 + distance[0]**2 - distance[1]**2) / (2 * (coords[1]['x'] - coords[0]['x']))
@@ -80,10 +80,8 @@ def getAnswerForThreeFlags(flagOneCoord, flagTwoCoord, flagThreeCoord, distFOne,
       beta2 = (coords[2]['y']**2 - coords[0]['y']**2 + coords[2]['x']**2 - coords[0]['x']**2 + distance[0]**2 - distance[2]**2) /  (2 * (coords[2]['x'] - coords[0]['x']))
       y = (beta1 - beta2) / (alpha2 - alpha1)
       x = alpha1 * y + beta1
-      #print('ELSE THREE', y, x)
       if (np.abs(x) <= 54 and np.abs(y) <= 32):
         answer = { 'x': x, 'y': y }
-      #print('ELSE THREE', answer)
     return answer
 
 def getAnswerForTwoFlags(flagOneCoord, flagTwoCoord, distFOne, distFTwo):
@@ -92,14 +90,8 @@ def getAnswerForTwoFlags(flagOneCoord, flagTwoCoord, distFOne, distFTwo):
     # p - флаги игрока
     distance.append(float(distFOne))
     distance.append(float(distFTwo))
-    # print('getAnswerForTwoFlags', flagOneCoord, flagTwoCoord)
     coords.append(flagOneCoord)
     coords.append(flagTwoCoord)
-    # Flags[flagTwo]['x']
-    # for elems in p:
-    #     if (elems.cmd):
-    #         coords.append(Flags[elems.cmd.p.join('')])
-    #         distance.append(elems.p[0])
     answer = None
     if (coords[0]['x'] == coords[1]['x']):
         answer = coordsForSeemX(coords, distance, 0, 1, None)
@@ -181,28 +173,37 @@ class absoluteCoords:
         self.nowPlayer = nowPlayer
 
 
-absolute_Coordinate = pd.read_csv(pathDefault+'20170904132709-Gliders2016_0-vs-HELIOS2016_0-groundtruth.csv', ',')
+absolute_Coordinate = pd.read_csv(pathDefault+prefixFiles+'groundtruth.csv', ',')
 
-def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation):
+def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation, isBall):
     timeRow = absolute_Coordinate[absolute_Coordinate['# time'] == time]
     nowPlayer = ''
     absoluteX = None
     absoluteY = None
     angleFlag = None
-    # print('time', time)
+    if (isBall):
+        # if (timeRow[' ball_x'] == None):
+        #   return None
+        if (len(timeRow[' ball_x'].values) == 0):
+            return None
+        absoluteX = timeRow[' ball_x'].values[0]
+        absoluteY = timeRow[' ball_y'].values[0]
+        if (angleOrientation == None):
+            angleOrientation = 0
+        angleFlag = 0
+        nowPlayer = 'b'
+        return absoluteCoords(absoluteX, absoluteY, angleFlag, angleOrientation, nowPlayer)
     if team == teams[0]:
-        if numPlayer == 1:
-            # print('time', elems['time'])
-            # print('flags', elems['flags'])
-            # print(timeRow[' LG1 x'])
-            if (len(timeRow[' LG1 x'].values) == 0):
+        if numPlayer == numberTeamGoalie[0]:
+            nameGoalie = ' LG' + str(numberTeamGoalie[0])
+            if (len(timeRow[nameGoalie + ' x'].values) == 0):
                 return None
-            absoluteX = timeRow[' LG1 x'].values[0]
-            absoluteY = timeRow[' LG1 y'].values[0]
+            absoluteX = timeRow[nameGoalie + ' x'].values[0]
+            absoluteY = timeRow[nameGoalie + ' y'].values[0]
             if (angleOrientation == None):
-                angleOrientation = timeRow[' LG1 body'].values[0]
-            angleFlag = timeRow[' LG1 body'].values[0]
-            nowPlayer = team + ' LG1'
+                angleOrientation = timeRow[nameGoalie + ' body'].values[0]
+            angleFlag = timeRow[nameGoalie + ' body'].values[0]
+            nowPlayer = team + nameGoalie
         else:
             if (len(timeRow[' L' + str(numPlayer) + ' x'].values) == 0):
                 return None
@@ -213,15 +214,16 @@ def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation):
             angleFlag = timeRow[' L' + str(numPlayer) + ' body'].values[0]
             nowPlayer = team + ' L' + str(numPlayer)
     if team == teams[1]:
-        if numPlayer == 1:
-            if (len(timeRow[' RG1 x'].values) == 0):
+        if numPlayer == numberTeamGoalie[1]:
+            nameGoalie = ' RG' + str(numberTeamGoalie[1])
+            if (len(timeRow[nameGoalie + ' x'].values) == 0):
                 return None
-            absoluteX = timeRow[' RG1 x'].values[0]
-            absoluteY = timeRow[' RG1 y'].values[0]
+            absoluteX = timeRow[nameGoalie + ' x'].values[0]
+            absoluteY = timeRow[nameGoalie + ' y'].values[0]
             if (angleOrientation == None):
-                angleOrientation = timeRow[' RG1 body'].values[0]
-            angleFlag = timeRow[' RG1 body'].values[0]
-            nowPlayer = team + ' RG1'
+                angleOrientation = timeRow[nameGoalie + ' body'].values[0]
+            angleFlag = timeRow[nameGoalie + ' body'].values[0]
+            nowPlayer = team + nameGoalie
         else:
             if (len(timeRow[' R' + str(numPlayer) + ' x'].values) == 0):
                 return None
@@ -231,5 +233,4 @@ def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation):
                 angleOrientation = timeRow[' R' + str(numPlayer) + ' body'].values[0]
             angleFlag = timeRow[' R' + str(numPlayer) + ' body'].values[0]
             nowPlayer = team + ' R' + str(numPlayer)
-    #print(angleFlag, team, numPlayer)
     return absoluteCoords(absoluteX, absoluteY, angleFlag, angleOrientation, nowPlayer)
