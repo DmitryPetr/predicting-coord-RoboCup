@@ -67,12 +67,9 @@ class storeAgent:
         if (len(self.storeCoord) > 3):
             current = self.storeCoord[len(self.storeCoord)-2].Players.viewPlayer
             target = self.storeCoord[len(self.storeCoord)-1].Players.viewPlayer
-            #print('removeList step 1 current' , current)
-            #print('removeList step 1 target', target)
             intersection = set(current) & set(target)
             for i in current:
                 if i not in intersection:
-                    # remove.append(i)
                     self.removePlayer[i] = []
             for key in self.removePlayer:
                 remove.append(key)
@@ -94,18 +91,20 @@ class storeAgent:
             if len(metPos) > 1:
                 length = len(metPos)
                 angleFlag = int(metPos[length - 1].angle)
-                #print('predict viewPlayer', elem)
-                #print('predict angleFlag', angleFlag)
                 radian = (angleFlag if angleFlag > 0 else 360 + angleFlag) / (2 * np.pi)
                 #print('predict radian', radian)
                 speedX = np.abs(metPos[length-1].x) - np.abs(metPos[length-2].x)
                 speedY = np.abs(metPos[length-1].y) - np.abs(metPos[length-2].y)
-                #print('predict speed', speedX, speedY)
-               #print('predict start coord', metPos[length-1].x, metPos[length-1].y)
-               # print('predict start delta', speedX * np.cos(radian), speedY * np.sin(radian))
+                # speedSecondX = np.abs(metPos[length - 2].x) - np.abs(metPos[length - 3].x)
+                # speedSecondY = np.abs(metPos[length - 2].y) - np.abs(metPos[length - 3].y)
+                # accelerationForX = speedX - speedSecondX
+                # accelerationForY = speedY - speedSecondY
+                # predictX = metPos[length-1].x + speedSecondX * np.cos(radian) + accelerationForX/2 * np.cos(radian)
+                # predictY = metPos[length-1].y + speedSecondY * np.sin(radian) + accelerationForY/2 * np.sin(radian)
+                # predictX = metPos[length-1].x + (speedX+speedSecondX)/2 * np.cos(radian)
+                # predictY = metPos[length-1].y + (speedY+speedSecondY)/2 * np.sin(radian)
                 predictX = metPos[length-1].x + speedX * np.cos(radian)
                 predictY = metPos[length-1].y + speedY * np.sin(radian)
-                #print('predict coord', predictX, predictY)
                 predictCoordinate.append({
                     'name': elem,
                     'x': predictX,

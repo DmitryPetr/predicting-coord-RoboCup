@@ -149,11 +149,14 @@ class paramsCreateStats:
 def addDataForStatDist(param, withFull):
     startValuePredict = None
     #print('tuple start', param)
+    #print('addDataForStatDist', param.predictObj)
     for name in param.predictObj:
         differencePredictLessTwo = []
         differencePredictFromTwoToFive = []
         differencePredictMoreFive = []
+        print('predictObj[name]', len(param.predictObj[name]))
         for indexPrObj in range(len(param.predictObj[name])):
+            #print('stats')
             newElems = param.predictObj[name][indexPrObj]
             if ((indexPrObj + 1 >= len(param.predictObj[name]) and newElems['predictTick'] == 1) or
                     indexPrObj + 1 < len(param.predictObj[name]) and (

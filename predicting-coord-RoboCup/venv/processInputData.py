@@ -23,7 +23,7 @@ def createMapViewFlag(resProcess, resFlagsTeam):
         for ind in range(numPeople):
             resProcess[item][(ind + 1)] = []
             for index, row in resFlagsTeam[item][ind].iterrows():
-                flags = Find_All_Flags(row, item, ind)
+                flags = Find_All_Flags(row)
                 resProcess[item][(ind + 1)].append({
                     'time': row['# time'],
                     'flags': flags
@@ -126,17 +126,18 @@ def calcPosOtherPl(param, resMovePTeam, team, ind):
 
 def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
     if (len(param.elems['flags']) < 2):
+        if (param.valueLackFlag > 3):
+            print('rotate for find flag!')
+            return None
         if (param.nowPlObj.getLength() < 2):
-            print('coordLast is nowPlObj.getLength() < 2')
-            print(param.nowPlObj.getLength())
+            print('rotate for find flag!')
             return None
         # addNewTickInfo
         lenArCoord = param.nowPlObj.getLength()
         firstCoordVal = param.nowPlObj.getItemAt(lenArCoord - 1)
         secondCoordVal = param.nowPlObj.getItemAt(lenArCoord - 2)
         if (firstCoordVal == None or secondCoordVal == None):
-            print('firstCoordVal or secondCoordVal is None')
-            print(firstCoordVal, secondCoordVal)
+            print('rotate for find flag!')
             return None
         param.speedX = np.abs(firstCoordVal.x) - np.abs(secondCoordVal.x)
         param.speedY = np.abs(firstCoordVal.y) - np.abs(secondCoordVal.y)

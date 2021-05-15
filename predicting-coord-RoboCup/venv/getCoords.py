@@ -68,7 +68,7 @@ def getAnswerForThreeFlags(flagOneCoord, flagTwoCoord, flagThreeCoord, distFOne,
     elif (coords[1]['x'] == coords[2]['x']):
       answer = coordsForSeemX(coords, distance, 1, 2, 0)
     elif (coords[0]['y'] == coords[1]['y']):
-      answer = this.coordsForSeemY(coords, distance, 0, 1, 2)
+      answer = coordsForSeemY(coords, distance, 0, 1, 2)
     elif (coords[0]['y'] == coords[2]['y']):
       answer = coordsForSeemY(coords, distance, 0, 2, 1)
     elif (coords[1]['y'] == coords[2]['y']):

@@ -69,7 +69,7 @@ for item in teams:
     for ind in range(numPeople):
         print('player', ind)
         playerList[item][(ind+1)] = storeAgent()
-        varianceArray = []storeAgent
+        varianceArray = []
         absoluteCoordArray = []
         playerName = None
         difference = []
@@ -80,11 +80,10 @@ for item in teams:
         speedY = None
         valueLackFlag = 0
         for elems in resProcessTeam[item][(ind+1)]:
-            #print('elems', elems)
-            print('time - ', elems['time'])
+            print('time - ', elems['time'], item, ind)
 
-            if (elems['time'] > 200):
-                break
+            # if (elems['time'] > 200):
+            #     break
 
             nowPlObj = playerList[item][(ind + 1)]
             # timeRow = absolute_Coordinate[absolute_Coordinate['# time'] == elems['time']]
@@ -141,21 +140,22 @@ for item in teams:
                        'calc y': round(averageY, 4), 'absolute x': absoluteX, 'absolute y': absoluteY,
                        'differenceX': round(differenceX, 4), 'differenceY': round(differenceY, 4)}
             resultDF = resultDF.append(new_row, ignore_index=True)
-        # Statistic
-        valueCreateStats = paramsCreateStats(predictObj, resultPredictMoreFiveBallDF, resultPredictFromTwoToFiveBallDF, resultPredictLessTwoBallDF,
-                 resultPredictMoreFiveDF, resultPredictFromTwoToFiveDF, resultPredictLessTwoDF,
-                 resultPredictStatisticLessTwoDF, resultPredictStatisticFromTwoToFiveDF, resultPredictStatisticMoreFiveDF)
-        dataForStatDist = addDataForStatDist(valueCreateStats, False)
 
-        resultPredictMoreFiveBallDF = dataForStatDist.resultPredictMoreFiveBallDF
-        resultPredictFromTwoToFiveBallDF = dataForStatDist.resultPredictFromTwoToFiveBallDF
-        resultPredictLessTwoBallDF = dataForStatDist.resultPredictLessTwoBallDF
-        resultPredictMoreFiveDF = dataForStatDist.resultPredictMoreFiveDF
-        resultPredictFromTwoToFiveDF = dataForStatDist.resultPredictFromTwoToFiveDF
-        resultPredictLessTwoDF = dataForStatDist.resultPredictLessTwoDF
+# Statistic
+print('Start statistic')
+valueCreateStats = paramsCreateStats(predictObj, resultPredictMoreFiveBallDF, resultPredictFromTwoToFiveBallDF, resultPredictLessTwoBallDF,
+         resultPredictMoreFiveDF, resultPredictFromTwoToFiveDF, resultPredictLessTwoDF,
+         resultPredictStatisticLessTwoDF, resultPredictStatisticFromTwoToFiveDF, resultPredictStatisticMoreFiveDF)
+dataForStatDist = addDataForStatDist(valueCreateStats, False)
+
+resultPredictMoreFiveBallDF = dataForStatDist.resultPredictMoreFiveBallDF
+resultPredictFromTwoToFiveBallDF = dataForStatDist.resultPredictFromTwoToFiveBallDF
+resultPredictLessTwoBallDF = dataForStatDist.resultPredictLessTwoBallDF
+resultPredictMoreFiveDF = dataForStatDist.resultPredictMoreFiveDF
+resultPredictFromTwoToFiveDF = dataForStatDist.resultPredictFromTwoToFiveDF
+resultPredictLessTwoDF = dataForStatDist.resultPredictLessTwoDF
 
         #resultStatisticDF = calculateExpectationAndVariance(resultStatisticDF, difference, playerName)
-
 # resultDF.to_csv(str(entropyName) + 'resultCalc.csv')
 # resultStatisticDF.to_csv(str(entropyName) + 'resultStatistic.csv')
 
@@ -185,7 +185,6 @@ for item in teams:
 # resultPredictStatisticFromTwoToFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticFromTwoToFive.csv')
 # resultPredictStatisticMoreFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticMoreFive.csv')
 #print(len(resultPredictLessTwoDF.index), len(resultPredictFromTwoToFiveDF.index), len(resultPredictMoreFiveDF.index))
-
 printDataAns = createDataForPlt(resultPredictLessTwoDF, resultDataForPrint, resultDataForPrintVariance, 'PredictLessTwo')
 resultDataForPrint = printDataAns['DFAddOne']
 resultDataForPrintVariance = printDataAns['DFAddTwo']

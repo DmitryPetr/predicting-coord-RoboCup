@@ -37,4 +37,4 @@ teams = ['HELIOS2017', 'Oxsy']
 pathDefault = 'C:\qualifyingWork\helios2017-vs-oxsy2017\\'
 prefixFiles = '20170905223309-HELIOS2017_4-vs-Oxsy_2-'
 numberTeamGoalie = [1, 7]
-numPeople = 1
+numPeople = 11
