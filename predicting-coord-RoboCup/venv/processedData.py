@@ -75,9 +75,6 @@ for item in teams:
         difference = []
         angleOrientation = None
         angleFlag = None
-        radian = None
-        speedX = None
-        speedY = None
         valueLackFlag = 0
         for elems in resProcessTeam[item][(ind+1)]:
             print('time - ', elems['time'], item, ind)
@@ -109,12 +106,9 @@ for item in teams:
             averageX = ansInfoForTick.averageX
             averageY = ansInfoForTick.averageY
             varianceArray = ansInfoForTick.varianceArray
-            arrPlayer = ansInfoForTick.arrPlayer
-            radian = ansInfoForTick.radian
-            speedX = ansInfoForTick.speedX
-            speedY = ansInfoForTick.speedY
 
-            newObj = infoForTick(averageX, averageY, absoluteX, absoluteY, radian, speedX, speedY, arrPlayer)
+            newObj = infoForTick(averageX, averageY, absoluteX, absoluteY, ansInfoForTick.radian,
+                                 ansInfoForTick.speedX, ansInfoForTick.speedY, ansInfoForTick.arrPlayer)
             playerList[item][(ind+1)].addNewTickInfo(newObj)
             if (item == teams[0] and (ind+1) == numberTeamGoalie[0]) or \
                     (item == teams[1] and (ind+1) == numberTeamGoalie[1]):

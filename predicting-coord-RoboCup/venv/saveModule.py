@@ -93,14 +93,20 @@ class storeAgent:
                 angleFlag = int(metPos[length - 1].angle)
                 radian = (angleFlag if angleFlag > 0 else 360 + angleFlag) / (2 * np.pi)
                 #print('predict radian', radian)
+
                 speedX = np.abs(metPos[length-1].x) - np.abs(metPos[length-2].x)
                 speedY = np.abs(metPos[length-1].y) - np.abs(metPos[length-2].y)
+                # # Третье состояние
+                # speedX = np.abs(metPos[length-1].x) - np.abs(metPos[length-2].x)
+                # speedY = np.abs(metPos[length-1].y) - np.abs(metPos[length-2].y)
                 # speedSecondX = np.abs(metPos[length - 2].x) - np.abs(metPos[length - 3].x)
                 # speedSecondY = np.abs(metPos[length - 2].y) - np.abs(metPos[length - 3].y)
                 # accelerationForX = speedX - speedSecondX
                 # accelerationForY = speedY - speedSecondY
+                # # Вычисление нового состояния с использованием ускорения
                 # predictX = metPos[length-1].x + speedSecondX * np.cos(radian) + accelerationForX/2 * np.cos(radian)
                 # predictY = metPos[length-1].y + speedSecondY * np.sin(radian) + accelerationForY/2 * np.sin(radian)
+                # # Вычисление усреднённой скорости
                 # predictX = metPos[length-1].x + (speedX+speedSecondX)/2 * np.cos(radian)
                 # predictY = metPos[length-1].y + (speedY+speedSecondY)/2 * np.sin(radian)
                 predictX = metPos[length-1].x + speedX * np.cos(radian)

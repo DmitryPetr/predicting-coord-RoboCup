@@ -1,7 +1,6 @@
 import pandas as pd
-from config import Flags
 import numpy as np
-from config import Flags, resultColumn, teams, pathDefault, prefixFiles, numberTeamGoalie
+from config import teams, pathDefault, prefixFiles, numberTeamGoalie
 
 def Remove_Null_or_NAN_Columns(df):
     dff = pd.DataFrame()

@@ -1,8 +1,6 @@
-import pandas as pd
-from config import Flags, resultColumn, resultStatisticColumn, \
-    resultPredictColumn, teams, pathDefault, prefixFiles, numberTeamGoalie, movementsTenTick, numPeople
+from config import Flags, numPeople
 from getCoords import *
-from saveModule import infoForTick, storeAgent, posPlayer, otherPlayer
+from saveModule import posPlayer, otherPlayer
 
 def readFile(resFlags, resMov):
     for item in teams:
