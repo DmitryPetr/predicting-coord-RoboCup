@@ -1,14 +1,10 @@
-import pandas as pd
-import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-from config import Flags, resultColumn, resultStatisticColumn, \
-    resultPredictColumn, teams, pathDefault, prefixFiles, numberTeamGoalie, movementsTenTick, numPeople
+from config import resultColumn, resultStatisticColumn, resultPredictColumn, numPeople
 from getCoords import *
-from saveModule import infoForTick, storeAgent, posPlayer, otherPlayer
+from saveModule import infoForTick, storeAgent
 from random import randint
-from statistic import calculateExpectationAndVariance, calcMaxAndMidDistForInterval, createDataForPlt, addDataForStatDist, paramsCreateStats
+from statistic import createDataForPlt, addDataForStatDist, paramsCreateStats
 from processInputData import readFile, createMapViewFlag, createMapViewMove, \
     calcInfoForTick, paramsForCalcPosition, createDataTickWithPredictVal, paramsForDataTickWithPredictVal
 
