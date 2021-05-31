@@ -75,7 +75,7 @@ for item in teams:
         for elems in resProcessTeam[item][(ind+1)]:
             print('time - ', elems['time'], item, ind)
 
-            # if (elems['time'] > 200):
+            # if (elems['time'] > 3000):
             #     break
 
             nowPlObj = playerList[item][(ind + 1)]
@@ -145,7 +145,7 @@ resultPredictMoreFiveDF = dataForStatDist.resultPredictMoreFiveDF
 resultPredictFromTwoToFiveDF = dataForStatDist.resultPredictFromTwoToFiveDF
 resultPredictLessTwoDF = dataForStatDist.resultPredictLessTwoDF
 
-        #resultStatisticDF = calculateExpectationAndVariance(resultStatisticDF, difference, playerName)
+#resultStatisticDF = calculateExpectationAndVariance(resultStatisticDF, difference, playerName)
 # resultDF.to_csv(str(entropyName) + 'resultCalc.csv')
 # resultStatisticDF.to_csv(str(entropyName) + 'resultStatistic.csv')
 
@@ -155,9 +155,9 @@ resultPredictLessTwoDF = dataForStatDist.resultPredictLessTwoDF
 #resultPredictDF.to_csv(str(entropyName) + 'resultPredict.csv')
 #resultPredictStatisticDF.to_csv(str(entropyName) + 'resultPredictStatistic.csv')
 
-# resultPredictLessTwoDF.to_csv(str(entropyName) + 'resultPredictLessTwo.csv')
-# resultPredictFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictFromTwoToFive.csv')
-# resultPredictMoreFiveDF.to_csv(str(entropyName) + 'resultPredictMoreFive.csv')
+resultPredictLessTwoDF.to_csv(str(entropyName) + 'resultPredictLessTwo.csv')
+resultPredictFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictFromTwoToFive.csv')
+resultPredictMoreFiveDF.to_csv(str(entropyName) + 'resultPredictMoreFive.csv')
 #
 # resultPredictStatisticLessTwoDF.to_csv(str(entropyName) + 'resultPredictStatisticLessTwo.csv')
 # resultPredictStatisticFromTwoToFiveDF.to_csv(str(entropyName) + 'resultPredictStatisticFromTwoToFive.csv')
@@ -167,9 +167,9 @@ resultPredictLessTwoDF = dataForStatDist.resultPredictLessTwoDF
 # resultPredictFromTwoToFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictFromTwoToFive.csv')
 # resultPredictMoreFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictMoreFive.csv')
 
-# resultPredictLessTwoBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictLessTwoBallDF.csv')
-# resultPredictFromTwoToFiveBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictFromTwoToFiveBallDF.csv')
-# resultPredictMoreFiveBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictMoreFiveBallDF.csv')
+resultPredictLessTwoBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictLessTwoBallDF.csv')
+resultPredictFromTwoToFiveBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictFromTwoToFiveBallDF.csv')
+resultPredictMoreFiveBallDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictMoreFiveBallDF.csv')
 
 # resultPredictStatisticLessTwoDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticLessTwo.csv')
 # resultPredictStatisticFromTwoToFiveDF.to_csv(needTeam + '_' + str(needPlayer) + 'resultPredictStatisticFromTwoToFive.csv')
@@ -222,13 +222,21 @@ dfWideVarianceBall = dfWideVarianceBall.reindex(order, axis=0)
 # print('dfWideVariance')
 # print(dfWideVariance)
 
+# df = sns.load_dataset('iris')
+# sns_plot = sns.pairplot(df, hue='species', height=2.5)
+# sns_plot.savefig("output.png")
 
+sns_plot = None
 print('dfWide draw')
-sns.lineplot(data=dfWide)
+sns_plot = sns.lineplot(data=dfWide)
+plt.savefig(str(entropyName) + 'dfWideDrawSS.jpg', dpi=300)
 plt.show()
+#fig = sns_plot.get_figure()
+#fig.savefig(str(entropyName) + 'dfWideDraw.jpg')
 
 print('dfWideVariance draw')
-sns.lineplot(data=dfWideVariance)
+sns_plot = sns.lineplot(data=dfWideVariance)
+plt.savefig(str(entropyName) + 'dfWideVarianceDraw.jpg', dpi=300)
 plt.show()
 
 # print('dfWideBall')
@@ -239,11 +247,13 @@ plt.show()
 
 
 print('dfWide draw Ball')
-sns.lineplot(data=dfWideBall)
+sns_plot = sns.lineplot(data=dfWideBall)
+plt.savefig(str(entropyName) + 'dfWideDrawBall.jpg', dpi=300)
 plt.show()
 
 print('dfWideVariance draw Ball')
-sns.lineplot(data=dfWideVarianceBall)
+sns_plot = sns.lineplot(data=dfWideVarianceBall)
+plt.savefig(str(entropyName) + 'dfWideVarianceBall.jpg', dpi=300)
 plt.show()
 
 # movementsTenTickDF = pd.DataFrame(columns=movementsTenTick)
