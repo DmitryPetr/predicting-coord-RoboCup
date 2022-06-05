@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from config import teams, pathDefault, prefixFiles, numberTeamGoalie
+from config import teams, pathDefault, prefixFiles, numberTeamGoalie, allLength, gridLen, allWidth, gridWidth
+
 
 def Remove_Null_or_NAN_Columns(df):
     dff = pd.DataFrame()
@@ -233,3 +234,44 @@ def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation, isBall):
             angleFlag = timeRow[' R' + str(numPlayer) + ' body'].values[0]
             nowPlayer = team + ' R' + str(numPlayer)
     return absoluteCoords(absoluteX, absoluteY, angleFlag, angleOrientation, nowPlayer)
+
+def getXoffset(index):
+    offsetX = allLength / gridLen
+    return -54 + offsetX * index
+
+def getYoffset(index):
+    offsetY = allWidth / gridWidth
+    return -32 + offsetY * index
+
+def getVectorWithObject(dfObject: pd.DataFrame):
+    resultVector = [0] * (gridLen * gridWidth)
+    # print('in getVectorWithObject start: ', len(dfObject))
+    for xItem in range(gridLen):
+        if len(dfObject) <= 0:
+            #print('xItem break: ')
+            break
+        for yItem in range(gridWidth):
+            if len(dfObject) <= 0:
+                #print('yItem break: ')
+                break
+            for index, row in dfObject.iterrows():
+                # print('test row: row', row, index)
+                # print('item current: ', row.x, row.y, getXoffset(xItem), getYoffset(yItem), row.x >= getXoffset(xItem), row.y >= getYoffset(yItem), row.x < getXoffset(xItem + 1), row.y < getYoffset(yItem + 1), row.x >= getXoffset(xItem) and row.y >= getYoffset(yItem) \
+                #      and row.x < getXoffset(xItem + 1) and row.y < getYoffset(yItem + 1))
+                if row.x >= getXoffset(xItem) and row.y >= getYoffset(yItem) \
+                    and row.x < getXoffset(xItem + 1) and row.y < getYoffset(yItem + 1):
+                    resultVector[(gridWidth * xItem) + yItem] += 1
+                    #print('in if add vector: ',row , (gridWidth * xItem) + yItem, resultVector[(gridWidth * xItem) + yItem], row.x, row.y)
+                    #print('in if add vector index: ', dfObject.tail(1).index)
+                    dfObject.drop(index, inplace=True)
+                    #print('in if add vector after: ', dfObject)
+    # print('in igetVectorWithObject after: ', dfObject)
+    # for itemIndex in range(len(resultVector)):
+    #     if resultVector[itemIndex]:
+    #         print('print itemIndex: ', itemIndex, resultVector[itemIndex])
+    # lenTT = 0
+    # for su in resultVector:
+    #     lenTT += su
+    #print('in getVectorWithObject end : ', lenTT)
+    # print('in getVectorWithObject end : ', resultVector.sum())
+    return resultVector

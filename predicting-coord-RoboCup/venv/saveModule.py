@@ -1,6 +1,11 @@
 from collections import deque
 import numpy as np
 
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
 class posPlayer:
     def __init__(self, x, y, angle):
         self.x = x
@@ -9,10 +14,10 @@ class posPlayer:
 
 class otherPlayer:
     def __init__(self):
-        self.viewPlayer = []
-        self.mapPlayer = {}
+        self.viewPlayer: list(str) = []
+        self.mapPlayer: dict(posPlayer) = {}
 
-    def addNewViewPlayer(self, playerName, posPlayer):
+    def addNewViewPlayer(self, playerName: str, posPlayer: posPlayer):
         self.viewPlayer.append(playerName)
         self.mapPlayer[playerName] = posPlayer
 
@@ -26,7 +31,7 @@ class infoForTick:
         self.angle = angle
         self.speedX = speedX
         self.speedY = speedY
-        self.Players = otherPlayers
+        self.Players: otherPlayer = otherPlayers
 
 class storeAgent:
     def __init__(self):

@@ -1,6 +1,6 @@
 from config import Flags, numPeople
 from getCoords import *
-from saveModule import posPlayer, otherPlayer
+from saveModule import posPlayer, otherPlayer, Point
 
 def readFile(resFlags, resMov):
     for item in teams:
@@ -53,16 +53,16 @@ class paramsForCalcPosition:
         self.absoluteY = absoluteY
         self.averageX = 0
         self.averageY = 0
-        self.arrPlayer = []
+        self.arrPlayer: list(otherPlayer) = []
         self.radian = None
         self.speedX = None
         self.speedY = None
 
-def calcPosOtherPl(param, resMovePTeam, team, ind):
+def calcPosOtherPl(param: paramsForCalcPosition, resMovePTeam, team, ind):
     # calc other obj
     arrPlayer = otherPlayer()
     for player in resMovePTeam[team][(ind + 1)][param.elems['time']]:
-        coordsNewPlayer = []
+        coordsNewPlayer: list(Point)= []
         for indexFirstFlag in range(len(param.elems['flags'])):
             for indexSecondFlag in range(indexFirstFlag + 1, len(param.elems['flags'])):
                 firstFlag = param.elems['flags'][indexFirstFlag]['column']
@@ -94,35 +94,16 @@ def calcPosOtherPl(param, resMovePTeam, team, ind):
                 if (calcCoords):
                     calcX = calcCoords['x']
                     calcY = calcCoords['y']
-                    coordsNewPlayer.append({'x': calcX, 'y': calcY})
+                    coordsNewPlayer.append(Point(calcX, calcY))
 
-        newPlayerX = 0.0
-        newPlayerY = 0.0
-        if (len(coordsNewPlayer) > 0):
-            sumX = [0, 0, 0, 0]
-            sumY = [0, 0, 0, 0]
-            for indexEl in range(0, len(coordsNewPlayer)):
-                el_X = coordsNewPlayer[indexEl]['x']
-                el_Y = coordsNewPlayer[indexEl]['y']
-                indexX = 0 if el_X < 0 else 1
-                indexY = 0 if el_Y < 0 else 1
-                sumX[indexX] += el_X
-                sumY[indexY] += el_Y
-                sumX[indexX + 2] += 1
-                sumY[indexY + 2] += 1
-            if (np.abs(sumX[0]) < sumX[1] and sumX[3] != 0):
-                newPlayerX = sumX[1] / sumX[3]
-            if (np.abs(sumX[0]) > sumX[1] and sumX[2] != 0):
-                newPlayerX = sumX[0] / sumX[2]
-            if (np.abs(sumY[0]) < sumY[1] and sumY[3] != 0):
-                newPlayerY = -(sumY[1]) / sumY[3]
-            if (np.abs(sumY[0]) > sumY[1] and sumY[2] != 0):
-                newPlayerY = np.abs(sumY[0]) / sumY[2]
-        positionP = posPlayer(newPlayerX, newPlayerY, player['angle'])
+        pointResult = caclAverageCoordForTick(coordsNewPlayer)
+
+        positionP = posPlayer(pointResult.x, pointResult.y, player['angle'])
+
         arrPlayer.addNewViewPlayer(player['column'], positionP)
     return arrPlayer
 
-def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
+def calcInfoForTick(param: paramsForCalcPosition, resMovePTeam, team, ind, absoluteCoordArray):
     if (len(param.elems['flags']) < 2):
         if (param.valueLackFlag > 3):
             print('rotate for find flag!')
@@ -149,7 +130,7 @@ def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
     else:
         param.angleOrientation = None
         param.valueLackFlag = 0
-        coordsIndAllFl = []
+        coordsIndAllFl: list(Point) = []
         for indexFirstFlag in range(len(param.elems['flags'])):
             for indexSecondFlag in range(indexFirstFlag + 1, len(param.elems['flags'])):
                 firstFlag = param.elems['flags'][indexFirstFlag]['column']
@@ -162,27 +143,11 @@ def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
                 if (calcCoords):
                     calcX = calcCoords['x']
                     calcY = calcCoords['y']
-                    coordsIndAllFl.append({'x': calcX, 'y': calcY})
-        if (len(coordsIndAllFl) > 0):
-            sumX = [0, 0, 0, 0]
-            sumY = [0, 0, 0, 0]
-            for indexEl in range(0, len(coordsIndAllFl)):
-                el_X = coordsIndAllFl[indexEl]['x']
-                el_Y = coordsIndAllFl[indexEl]['y']
-                indexX = 0 if el_X < 0 else 1
-                indexY = 0 if el_X < 0 else 1
-                sumX[indexX] += el_X
-                sumY[indexY] += el_Y
-                sumX[indexX + 2] += 1
-                sumY[indexY + 2] += 1
-            if (np.abs(sumX[0]) < sumX[1] and sumX[3] != 0):
-                param.averageX = sumX[1] / sumX[3]
-            if (np.abs(sumX[0]) > sumX[1] and sumX[2] != 0):
-                param.averageX = sumX[0] / sumX[2]
-            if (np.abs(sumY[0]) < sumY[1] and sumY[3] != 0):
-                param.averageY = sumY[1] / sumY[3]
-            if (np.abs(sumY[0]) > sumY[1] and sumY[2] != 0):
-                param.averageY = sumY[0] / sumY[2]
+                    coordsIndAllFl.append(Point(calcX, calcY))
+
+        resultPoint: Point = caclAverageCoordForTick(coordsIndAllFl)
+        param.averageX = resultPoint.x
+        param.averageY = resultPoint.y
 
         distanceMax = float(param.elems['flags'][0]['dist'])
         distanceMix = float(param.elems['flags'][0]['dist'])
@@ -225,6 +190,33 @@ def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
         # calc other obj
         param.arrPlayer = calcPosOtherPl(param, resMovePTeam, team, ind)
         return param
+
+
+def caclAverageCoordForTick(coordsNewPlayer: [Point]):
+    newX = 0.0
+    newY = 0.0
+    if (len(coordsNewPlayer) > 0):
+        sumX = [0, 0, 0, 0]
+        sumY = [0, 0, 0, 0]
+        for indexEl in range(0, len(coordsNewPlayer)):
+            el_X = coordsNewPlayer[indexEl].x
+            el_Y = coordsNewPlayer[indexEl].y
+            indexX = 0 if el_X < 0 else 1
+            indexY = 0 if el_Y < 0 else 1
+            sumX[indexX] += el_X
+            sumY[indexY] += el_Y
+            sumX[indexX + 2] += 1
+            sumY[indexY + 2] += 1
+        if (np.abs(sumX[0]) < sumX[1] and sumX[3] != 0):
+            newX = sumX[1] / sumX[3]
+        if (np.abs(sumX[0]) > sumX[1] and sumX[2] != 0):
+            newX = sumX[0] / sumX[2]
+        if (np.abs(sumY[0]) < sumY[1] and sumY[3] != 0):
+            newY = -(sumY[1]) / sumY[3]
+        if (np.abs(sumY[0]) > sumY[1] and sumY[2] != 0):
+            newY = np.abs(sumY[0]) / sumY[2]
+    return Point(newX, newY)
+
 
 class paramsForDataTickWithPredictVal:
     def __init__(self, listPredict, elems, predictObj, angleOrientation):

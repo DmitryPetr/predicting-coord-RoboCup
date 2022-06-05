@@ -2,3 +2,5 @@
 /.idea/
 /venv/Lib/
 /venv/Scripts/
+/venv/dataCSV
+/venv/__pycache__
