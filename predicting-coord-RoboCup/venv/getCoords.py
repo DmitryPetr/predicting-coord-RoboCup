@@ -172,7 +172,7 @@ class absoluteCoords:
         self.nowPlayer = nowPlayer
 
 
-absolute_Coordinate = pd.read_csv(pathDefault+prefixFiles+'groundtruth.csv', ',')
+absolute_Coordinate = pd.read_csv(pathDefault+prefixFiles+'groundtruth.csv', sep=',')
 
 def getAbsolutedCoordinate(team, numPlayer, time, angleOrientation, isBall):
     timeRow = absolute_Coordinate[absolute_Coordinate['# time'] == time]

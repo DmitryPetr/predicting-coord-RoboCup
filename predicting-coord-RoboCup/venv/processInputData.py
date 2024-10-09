@@ -7,10 +7,11 @@ def readFile(resFlags, resMov):
         resFlags[item] = []
         resMov[item] = []
         for index in range(numPeople):
-          print(index, pathDefault+prefixFiles+item+'_'+str((index+1))+'-landmarks.csv')
-          iter = pd.read_csv(pathDefault + prefixFiles + item + '_' + str((index+1)) + '-landmarks.csv', ',')
-          print(index, pathDefault + prefixFiles + item + '_' + str((index + 1)) + '-moving.csv')
-          iterMov = pd.read_csv(pathDefault + prefixFiles + item + '_' + str((index + 1)) + '-moving.csv', ',')
+          startPath = pathDefault+prefixFiles+item+'_'+str((index+1))
+          print(index, startPath+'-landmarks.csv')
+          iter = pd.read_csv(startPath + '-landmarks.csv', sep=',')
+          print(index, startPath + '-moving.csv')
+          iterMov = pd.read_csv(startPath + '-moving.csv', sep=',')
           resFlags[item].append(Remove_Null_or_NAN_Columns(iter))
           resMov[item].append(Remove_Null_or_NAN_Columns(iterMov))
     return {'resFlags': resFlags, 'resMov': resMov}
