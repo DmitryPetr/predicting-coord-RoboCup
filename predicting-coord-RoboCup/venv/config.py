@@ -32,12 +32,20 @@ resultColumn = ['time', 'player', 'calc x', 'calc y', 'absolute x', 'absolute y'
 resultStatisticColumn = ['player', 'expectationX','expectationY', 'varianceX', 'varianceY']
 resultPredictColumn = ['timeNow', 'player','viewFrom', 'nowX', 'nowY', 'nowAbsoluneX', 'nowAbsoluneY', 'predictX', 'predictY', 'predictAbsoluneX', 'predictAbsoluneY', 'nowDiffX', 'nowDiffY', 'predictDiffX', 'predictDiffY','predictVarianceX','predictVarianceY','startPredictX','startPredictY']
 movementsTenTick = ['typeCoord', 'maxValue', 'maxValueX', 'maxValueY', 'midValue', 'midValueX', 'midValueY']
-teams = ['Gliders2016', 'HELIOS2016']
+#teams = ['Gliders2016', 'HELIOS2016']
+teams = ['Oxsy', 'HELIOS2016']
 #pathDefault = 'C:\qualityWorkMasters\predicting-coord-RoboCup\example_csv\\'
 pathDefault = '/mnt/c/qualityWorkMasters/predicting-coord-RoboCup/example_csv/'#
 # pathDefault = 'C:\qualifyingWork\helios2017-vs-oxsy2017\\'
-prefixFiles = '20170904132709-Gliders2016_0-vs-HELIOS2016_0-'
-numberTeamGoalie = [1, 1]
+prefixFiles = '20170905231202-Oxsy_0-vs-HELIOS2016_2-'
+#prefixFiles = '20170904132709-Gliders2016_0-vs-HELIOS2016_0-'
+#numberTeamGoalie = [1, 1] # Gliders2016_0-vs-HELIOS2016_0
+numberTeamGoalie = [7, 1] # Oxsy_0-vs-HELIOS2016_2
 numPeople = 11
-nearestRadius = 2.0
+nearestRadius = 4.0
+nearestGoalRadius = 15.0
 listSide = ['L', 'R']
+listGoalLeft = ['fglt', 'fglb', 'gl']
+listGoalRight = ['fgrt', 'fgrb', 'gr']
+
+#20170905231202-Oxsy_0-vs-HELIOS2016_2-groundtruth.csv
