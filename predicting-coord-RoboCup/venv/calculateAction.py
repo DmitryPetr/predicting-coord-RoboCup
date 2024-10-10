@@ -45,7 +45,7 @@ def isInsideRadius(center: CoordinateObject, object: CoordinateObject, r: float)
 
     return isInside
 
-def haveOtherSide(listPlayer: List[str]) -> bool:
+def haveOtherSidePlayer(listPlayer: List[str]) -> bool:
     #print('haveOtherSide: ', len(listPlayer), listPlayer and len(listPlayer) < 2)
 
     if listPlayer != None and len(listPlayer) < 2:
