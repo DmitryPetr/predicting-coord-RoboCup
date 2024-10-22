@@ -1,7 +1,7 @@
 from typing import Dict, List
 import matplotlib.pyplot as plt
 #import seaborn as sns
-from config import resultColumn, resultStatisticColumn, numPeople, listSide
+from config import actionInfoTick, listSide
 from getCoords import *
 #from saveModule import infoForTick, storeAgent
 import pandas as pd
@@ -43,6 +43,9 @@ absolute_Coordinate = pd.read_csv(pathDefault+prefixFiles+'groundtruth.csv', sep
 mapPlayerTemplate = getMapActionForPlayerByTick()
 
 mapInfoFieldWithBallByTick: Dict[int, ReturnInfo] = dict()
+resultOfActionFieldDF = pd.DataFrame(columns=actionInfoTick)
+
+print(resultOfActionFieldDF)
 
 mapNearestPlayersByTick = {}
 
@@ -55,20 +58,16 @@ times = absolute_Coordinate.shape[0]
 for index, row in absolute_Coordinate.iterrows():
     mapPlayerTick = dict(mapPlayerTemplate)
     if index < 6000:
-        #print(f'test new tick time {index}______\n')
         mapNowTime = row.to_dict()
 
         ballInfoObj = BallInfo(CoordinateObject(mapNowTime[' ball_x'], mapNowTime[' ball_y']), 
                                SpeedObject(mapNowTime[' ball_vx'], mapNowTime[' ball_vy']))
-
-        #print(f'test playmode: ', mapNowTime[' playmode'])
 
         if mapNowTime[' playmode'] != ' play_on':
             #print(f'test playmode is not play_on, skipping...')
             continue
 
         nearestPlayersL = calculateNearestPlayerToBall(row)
-        #print('test __ nearestPlayers: ', nearestPlayersL.copy())
         nearGoalSide = nearGoal(row)
 
         #print('test dribling: ', len(nearestPlayers) == 1)
@@ -110,8 +109,6 @@ def isPreKickToGoal(firstPoint: ReturnInfo, secondPoint: ReturnInfo) -> Coordina
         crossPoint = twoLineCross(listGoalCoords[0], listGoalCoords[1], firstPoint.ballInfo.location, secondPoint.ballInfo.location)
         #print(f'test isPreKickToGoal crossPoint: {crossPoint.toStr()}')
         crossBetweenGoal = betweenRough(listGoalCoords[0].y, crossPoint.y, listGoalCoords[1].y)
-        #print(f'test isPreKickToGoal listGoalCoords: {listGoalCoords[0].y}, {listGoalCoords[1].y}')
-        #print(f'test isPreKickToGoal crossBetweenGoal: {crossBetweenGoal}')
         return crossPoint if crossBetweenGoal else None
 
 
@@ -121,68 +118,43 @@ def isKickToGoal(time: int) -> CoordinateObject | None:
     #nextTwoTick = key+2
     #nextThreeTick = key+3
     if ((nextTick) in mapInfoFieldWithBallByTick):
-    #if ((nextTick) in mapInfoFieldWithBallByTick) and ((nextTwoTick) in mapInfoFieldWithBallByTick) and ((nextThreeTick) in mapInfoFieldWithBallByTick):
         secondPoint = mapInfoFieldWithBallByTick[nextTick]
-        #thirdPoint = mapInfoFieldWithBallByTick[nextTwoTick]
-        #fourPoint = mapInfoFieldWithBallByTick[nextThreeTick]
-        #print('test isKickToGoal startPoint: ', startPoint.toStr())
-        #print('test isKickToGoal secondPoint: ', secondPoint.toStr())
-        #print('test isKickToGoal thirdPoint: ', thirdPoint.toStr())
-        #print('test isKickToGoal fourPoint: ', fourPoint.toStr())
         crossFirst = isPreKickToGoal(startPoint, secondPoint)
-        #crossSecond = isPreKickToGoal(secondPoint, thirdPoint)
-        #crossThird = isPreKickToGoal(thirdPoint, fourPoint)
-        # if crossFirst != None:
-        #     print('test isKickToGoal crossFirst: ', crossFirst.toStr())
-        # else:
-        #     print('test isKickToGoal crossFirst fail')
-
-        # if crossSecond != None:
-        #     print('test isKickToGoal crossSecond: ', crossSecond.toStr())
-        # else:
-        #     print('test isKickToGoal crossSecond fail')
-
-        # if crossThird != None:
-        #     print('test isKickToGoal crossThird: ', crossThird.toStr())
-        # else:
-        #     print('test isKickToGoal crossThird fail')
 
         if crossFirst != None:
-        #if crossFirst != None and crossSecond != None and roughСompare(crossFirst, crossSecond):
             return crossFirst
     return None
 
 def getNextPlayer(startIndex: int) -> int | None:
-    #print('test getNextPlayer if startIndex: ', startIndex)
     while ((startIndex) in mapInfoFieldWithBallByTick):
         nowState = mapInfoFieldWithBallByTick[startIndex]
-        #print('test getNextPlayer in while main startIndex: ', startIndex)
-        #print('test getNextPlayer in while main nowState: ', nowState.toStr())
-        #print('test getNextPlayer in while main: ', len(nowState.nearestPlayers))
         if (len(nowState.nearestPlayers) > 0):
-            #print('test getNextPlayer in while break: ', startIndex)
             break
         startIndex += 1
         #setTimeout(3000)
-    #print('test getNextPlayer if startIndex after while: ', startIndex)
     return startIndex if (startIndex) in mapInfoFieldWithBallByTick else None
 
 def isPrePass(firstPoint: ReturnInfo, secondPoint: ReturnInfo, nowTime: int) -> List[str] | None:
     #print('test isPrePass start')
+    lastTick = None
+    if (nowTime -1) in mapInfoFieldWithBallByTick:
+        lastTick = mapInfoFieldWithBallByTick[nowTime -1]
     if firstPoint.sizeGoal == None \
     and secondPoint.sizeGoal == None:
         isNormalSpeedToPass = (abs(secondPoint.ballInfo.speed.xv) > 0.7 or abs(secondPoint.ballInfo.speed.yv) > 0.7)
         nextLenPlayer = len(secondPoint.nearestPlayers)
         nowLenPlayer = len(firstPoint.nearestPlayers)
         isNormalNearPlayerToPass = nowLenPlayer > 0 and (nextLenPlayer == 0 or not (haveOtherSidePlayer(secondPoint.nearestPlayers)))
+        isNotSamePlayer = not (nowLenPlayer == 1 and nextLenPlayer == 1 and firstPoint.nearestPlayers[0] == secondPoint.nearestPlayers[0])
         #print('test isPrePass if first: ', isNormalSpeedToPass, nextLenPlayer, isNormalNearPlayerToPass)
 
-        if (isNormalSpeedToPass and isNormalNearPlayerToPass):
+        if (isNormalSpeedToPass and isNormalNearPlayerToPass and isNotSamePlayer):
             # Доделать, что при борьбе или при ведении меча можно отдать пасс напарнику
             print(f'Time {key}')
             #print('test isPrePass if normal')
             print('test isPrePass: ', len(firstPoint.nearestPlayers))
-            startPlayer = firstPoint.nearestPlayers[0] if len(firstPoint.nearestPlayers) == 1 else None
+            startPlayer = (firstPoint.nearestPlayers[0] if len(firstPoint.nearestPlayers) == 1 else None) or \
+                ((lastTick.nearestPlayers[0] if len(lastTick.nearestPlayers) == 1 else None))
             startSide = listSide[0] if startPlayer != None and listSide[0] in startPlayer else listSide[1]
             #print('test isPrePass if startPlayer: ', startPlayer, startSide)
             nextIndex = getNextPlayer(nowTime+2)
@@ -201,7 +173,7 @@ def isPrePass(firstPoint: ReturnInfo, secondPoint: ReturnInfo, nowTime: int) -> 
             if (not (startSide in nextPassPlayer)):
                 return None
             #print('test isPrePass if nowState after if')
-            return [startPlayer, nextPassPlayer]
+            return [startPlayer, nextPassPlayer, startSide]
 
     return None
 
@@ -218,42 +190,67 @@ def isPass(time: int) -> CoordinateObject | None:
             passPlayers = isPrePass(startPoint, secondPoint, time)
 
             return passPlayers
-            #crossSecond = isPreKickToGoal(secondPoint, thirdPoint)
-            #crossThird = isPreKickToGoal(thirdPoint, fourPoint)
-            # if crossFirst != None:
-            #     print('test isKickToGoal crossFirst: ', crossFirst.toStr())
-            # else:
-            #     print('test isKickToGoal crossFirst fail')
-
-            # if crossSecond != None:
-            #     print('test isKickToGoal crossSecond: ', crossSecond.toStr())
-            # else:
-            #     print('test isKickToGoal crossSecond fail')
-
-            # if crossThird != None:
-            #     print('test isKickToGoal crossThird: ', crossThird.toStr())
-            # else:
-            #     print('test isKickToGoal crossThird fail')
-
-            #if crossFirst != None and crossSecond != None and roughСompare(crossFirst, crossSecond):
     return None
+
+def appendToResultList(resultdDF, time: int, timeValue: ReturnInfo, action: ACTION_PLAYER, sideWithBall: str, passPair: List[str] | None):
+    #print('Start appendToResultList:')
+    #print(resultdDF)
+    valForAppend = {
+        'time': time,
+        'action': action.value, 
+        'sideWithBall': sideWithBall, 
+        'lenOfNearest': len(timeValue.nearestPlayers), 
+        'nearestPlayer': timeValue.nearestPlayers,
+        'passPair': passPair
+    }
+    #print('Start  v2 appendToResultList:')
+    #print(valForAppend)
+    #print(resultdDF)
+    #print(type(resultdDF))
+    resultdDF = pd.concat([resultdDF, pd.DataFrame([valForAppend])], ignore_index=True)
+    return resultdDF
 
 for key, value in mapInfoFieldWithBallByTick.items():
     #if value.sizeGoal == None and (abs(value.ballInfo.speed.xv) > 1 or abs(value.ballInfo.speed.yv) > 1):
     #print(f'Time {key}: {value.toStr()}')
+    print(f'\nTime {key}')
+
+    #print(resultOfActionFieldDF)
+    kickGoal = isKickToGoal(key)
+            #print(f'\kickGoal {kickGoal != None}')
+    if kickGoal != None:
+        #print(f'Time {key}: {value.toStr()}')
+        #print(f'\nTime {key}')
+        resultOfActionFieldDF = appendToResultList(resultOfActionFieldDF, key, value, ACTION_PLAYER.KICK_GOAL, listSide[0] if value.sizeGoal in listSide[1] else listSide[1], None)
+        #print(f'This is  kicking the goal: {kickGoal.toStr()}\n{value.toStr()}')
+        continue
+
     passPlayers = isPass(key)
     if (passPlayers != None):
             #print(f'Time {key}')
-            print('test isPass passPlayers: ', passPlayers)
+            #print('test isPass passPlayers: ', passPlayers)
+            #print('test isPass passPlayers value: ', value.toStr())
+            resultOfActionFieldDF = appendToResultList(resultOfActionFieldDF, key, value, ACTION_PLAYER.PASSING, passPlayers[2], passPlayers)
+            continue
     
-    # if len(value.nearestPlayers) > 2:
-    #     print(f'Time {key}: {value.toStr()}')
-    # if value.sizeGoal != None and (abs(value.ballInfo.speed.xv) > 1 or abs(value.ballInfo.speed.yv) > 1):
-    #         print(f'\nTime {key}')
-    #         #print(f'Time {key}: {value.toStr()}')
-    #         kickGoal = isKickToGoal(key)
-    #         #print(f'\kickGoal {kickGoal != None}')
-    #         if kickGoal != None:
-    #             #print(f'Time {key}: {value.toStr()}')
-    #             #print(f'\nTime {key}')
-    #             print(f'This is  kicking the goal: {kickGoal.toStr()}\n{value.toStr()}')
+    if kickGoal == None and passPlayers == None and len(value.nearestPlayers) == 1:
+        resultOfActionFieldDF = appendToResultList(resultOfActionFieldDF, key, value, ACTION_PLAYER.DRIBLING,listSide[0] if listSide[0] in value.nearestPlayers[0] else listSide[1], None)
+        #print(f'test dribling: {value.toStr()}')
+        continue
+        #print(f'This is  kicking the goal: {kickGoal.toStr()}\n{value.toStr()}')
+        #mapPlayerTick[nearestPlayers[0]] = ACTION_PLAYER.DRIBLING.value
+
+    if haveOtherSidePlayer(value.nearestPlayers):
+        resultOfActionFieldDF = appendToResultList(resultOfActionFieldDF, key, value, ACTION_PLAYER.BALL_FIGHT, None, None)
+        #print(f'test haveOtherSidePlayer: {value.toStr()}')
+        continue
+
+    #print(f'test finding ball: {value.toStr()}')
+    resultOfActionFieldDF = appendToResultList(resultOfActionFieldDF, key, value, ACTION_PLAYER.SEARCHING, None, None)
+        # for player in nearestPlayers:
+        #     mapPlayerTick[player] = ACTION_PLAYER.BALL_FIGHT.value
+
+
+print("test resultOfActionFieldDF: ", resultOfActionFieldDF)
+
+resultOfActionFieldDF.to_csv(f'{teams[0]}-{teams[1]}-action-groundtruth.csv')
