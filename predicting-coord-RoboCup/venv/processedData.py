@@ -129,7 +129,8 @@ for item in teams:
             new_row = {'time': elems['time'], 'player': nowPlayer, 'calc x': round(averageX, 4),
                        'calc y': round(averageY, 4), 'absolute x': absoluteX, 'absolute y': absoluteY,
                        'differenceX': round(differenceX, 4), 'differenceY': round(differenceY, 4)}
-            resultDF = resultDF.append(new_row, ignore_index=True)
+            #resultDF = resultDF.append(new_row, ignore_index=True)
+            resultDF = pd.concat([resultDF, pd.DataFrame([new_row])], ignore_index=True)
 
 # Statistic
 print('Start statistic')

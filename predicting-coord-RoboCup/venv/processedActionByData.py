@@ -8,7 +8,7 @@ import pandas as pd
 from random import randint
 from processInputData import readFile
 from calculateAction import calculateNearestPlayerToBall, getMapActionForPlayerByTick, \
-haveOtherSidePlayer, nearGoal, CoordinateObject, SpeedObject, getCoordGoalBySide, twoLineCross, roughСompare
+haveOtherSidePlayer, nearGoal, CoordinateObject, SpeedObject, getCoordGoalBySide, twoLineCross, roughСompare, calculateMiddleDistPlayerToBall
 import math
 from enums import ACTION_PLAYER
 import time
@@ -29,8 +29,9 @@ class BallInfo:
         return f'location: {self.location.toStr()}, speed: {self.speed.toStr()}'
 
 class ReturnInfo:
-    def __init__(self, nearestPlayers: List[str] = [], sizeGoal: str = None, ballInfo: BallInfo = None):
+    def __init__(self, nearestPlayers: List[str] = [], sizeGoal: str = None, ballInfo: BallInfo = None, middleDistPlayers: List[str] = []):
         self.nearestPlayers = nearestPlayers
+        self.middleDistPlayers = middleDistPlayers
         self.sizeGoal = sizeGoal
         self.ballInfo = ballInfo
 
@@ -68,6 +69,7 @@ for index, row in absolute_Coordinate.iterrows():
             continue
 
         nearestPlayersL = calculateNearestPlayerToBall(row)
+        middleDistPlayersL = calculateMiddleDistPlayerToBall(row)
         nearGoalSide = nearGoal(row)
 
         #print('test dribling: ', len(nearestPlayers) == 1)
@@ -86,7 +88,7 @@ for index, row in absolute_Coordinate.iterrows():
         # for player in nearestPlayers:
         #     print(f"{player}: {mapPlayerTick[player]}")
 
-        mapInfoFieldWithBallByTick[mapNowTime['# time']] = ReturnInfo(list(nearestPlayersL), nearGoalSide, ballInfoObj)
+        mapInfoFieldWithBallByTick[mapNowTime['# time']] = ReturnInfo(list(nearestPlayersL), nearGoalSide, ballInfoObj, middleDistPlayersL)
     else:
         break
 
@@ -201,7 +203,10 @@ def appendToResultList(resultdDF, time: int, timeValue: ReturnInfo, action: ACTI
         'sideWithBall': sideWithBall, 
         'lenOfNearest': len(timeValue.nearestPlayers), 
         'nearestPlayer': timeValue.nearestPlayers,
-        'passPair': passPair
+        'lenOfMiddleDist': len(timeValue.middleDistPlayers), 
+        'middleDistPlayer': timeValue.middleDistPlayers,
+        'passPair': passPair,
+        'goalIsNearest': timeValue.sizeGoal != None
     }
     #print('Start  v2 appendToResultList:')
     #print(valForAppend)
@@ -253,4 +258,4 @@ for key, value in mapInfoFieldWithBallByTick.items():
 
 print("test resultOfActionFieldDF: ", resultOfActionFieldDF)
 
-resultOfActionFieldDF.to_csv(f'{teams[0]}-{teams[1]}-action-groundtruth.csv')
+resultOfActionFieldDF.to_csv(f'{teams[0]}-{teams[1]}-action-groundtruth-v3.csv')

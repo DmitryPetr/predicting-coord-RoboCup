@@ -1,6 +1,6 @@
 from typing import Dict, List
 import matplotlib.pyplot as plt
-from config import numPeople, nearestRadius, listSide, listGoalLeft, listGoalRight, Flags, nearestGoalRadius
+from config import numPeople, nearestRadius, listSide, listGoalLeft, listGoalRight, Flags, nearestGoalRadius, middleRadius
 from getCoords import *
 import pandas as pd
 import math
@@ -95,6 +95,25 @@ def calculateNearestPlayerToBall(nowTime: pd.Series) -> List[str]:
                     #print('test isInsideRadius: ', namePlayer)
 
     return listNearest
+
+def calculateMiddleDistPlayerToBall(nowTime: pd.Series) -> List[str]:
+    listMiddleDist = []
+    mapNowTime = nowTime.to_dict()
+    time = mapNowTime['# time']
+    #print('___ test calculateNearestPlayerToBall time: ', time)
+    #print(f'test __ calculateNearestPlayerToBall time: {mapNowTime['# time']}')
+    ballCoord = CoordinateObject(mapNowTime[' ball_x'], mapNowTime[' ball_y'])
+    for idxTeam, sideTeam in enumerate(listSide):
+        for playerIndex in range(numPeople):
+            isGoalie = (playerIndex+1) == numberTeamGoalie[idxTeam]
+            namePlayer = f"{sideTeam}G{(playerIndex+1)}" if isGoalie else f"{sideTeam}{(playerIndex+1)}"
+            playerCoord = CoordinateObject(mapNowTime[f' {namePlayer} x'], mapNowTime[f' {namePlayer} y'])
+
+            if isInsideRadius(ballCoord, playerCoord, middleRadius):
+                    listMiddleDist.append(namePlayer)
+                    #print('test isInsideRadius: ', namePlayer)
+
+    return listMiddleDist
 
 
 #float dot[2];  // точка пересечения https://habr.com/ru/articles/523440/

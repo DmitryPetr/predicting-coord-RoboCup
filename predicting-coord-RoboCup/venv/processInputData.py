@@ -224,6 +224,7 @@ def calcInfoForTick(param, resMovePTeam, team, ind, absoluteCoordArray):
         if np.abs(param.averageY) > 32:
             return None
         # calc other obj
+        print('processed data: ')
         param.arrPlayer = calcPosOtherPl(param, resMovePTeam, team, ind)
         return param
 
@@ -279,8 +280,10 @@ def createDataTickWithPredictVal(param, nowPlayer):
                 'predictTick': predictVal['predictTick'],
             }
             if name in param.predictObj:
+                #param.predictObj[name] = pd.concat([param.predictObj[name], pd.DataFrame([addObj])], ignore_index=True)
                 param.predictObj[name].append(addObj)
             else:
+                #param.predictObj[name] = pd.concat([param.predictObj[name], pd.DataFrame([addObj])], ignore_index=True)
                 param.predictObj[name] = [addObj]
 
     return param.predictObj
