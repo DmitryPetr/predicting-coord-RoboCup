@@ -77,6 +77,21 @@ def nearGoal(nowTime: pd.Series) -> str:
 
     return None
 
+def nearGoalWithCoordinate(ballCoord: CoordinateObject) -> str:
+    for flag in listGoalLeft:
+        valueFlag = Flags[flag]
+        point = CoordinateObject(valueFlag['x'], valueFlag['y'])
+        if isInsideRadius(ballCoord, point, nearestGoalRadius):
+            return listSide[0]
+        
+    for flag in listGoalRight:
+        valueFlag = Flags[flag]
+        point = CoordinateObject(valueFlag['x'], valueFlag['y'])
+        if isInsideRadius(ballCoord, point, nearestGoalRadius):
+            return listSide[1]
+
+    return None
+
 def calculateNearestPlayerToBall(nowTime: pd.Series) -> List[str]:
     listNearest = []
     mapNowTime = nowTime.to_dict()
