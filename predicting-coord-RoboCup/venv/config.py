@@ -28,19 +28,28 @@ Flags = {
   'fcb': {'x': 0, 'y': -34}, 'frb': {'x': 52.5, 'y': -34},
 }
 # , 'expectation', 'variance'
-resultForPlayerColumn = ['time', 'x', 'y', 'angle', 'xBall','yBall', 'opponentVector', 'teamVector', 'sideTeam', 'strategyOpponent']
+## Изначальные столбцы resultForPlayerColumn
+#resultForPlayerColumn = ['time', 'x', 'y', 'angle', 'xBall','yBall', 'opponentVector', 'teamVector', 'sideTeam', 'strategyOpponent']
+## Влияние противника на клетку resultForPlayerColumn
+resultForPlayerColumn = ['time', 'x', 'y', 'angle', 'xBall','yBall', 'opponentInfluenceVector', 'sideTeam', 'strategyOpponent']
 resultColumn = ['time', 'player', 'calc x', 'calc y', 'absolute x', 'absolute y','differenceX', 'differenceY']
 resultStatisticColumn = ['player', 'expectationX','expectationY', 'varianceX', 'varianceY']
 resultPredictColumn = ['timeNow', 'player','viewFrom', 'nowX', 'nowY', 'nowAbsoluneX', 'nowAbsoluneY', 'predictX', 'predictY', 'predictAbsoluneX', 'predictAbsoluneY', 'nowDiffX', 'nowDiffY', 'predictDiffX', 'predictDiffY','predictVarianceX','predictVarianceY','startPredictX','startPredictY']
 movementsTenTick = ['typeCoord', 'maxValue', 'maxValueX', 'maxValueY', 'midValue', 'midValueX', 'midValueY']
 # left team - index 0, right team - index 1:
-teams = ['Oxsy', 'HELIOS2016']
+# teams = ['Oxsy', 'HELIOS2016']
+teams = ['Gliders2016', 'HELIOS2016']
+#teams = ['Oxsy', 'HELIOS2016']
+# teams = ['Oxsy', 'HfutEngine2017']
 #pathDefault = 'C:\qualifyingWorkMasters\qualifyingWork\example_csv\\'
 pathDefault ='C:\qualityWorkMasters\qualifyingWork\predicting-coord-RoboCup\example_csv\\'
 # pathDefault = 'C:\qualifyingWork\helios2017-vs-oxsy2017\\'
-# prefixFiles = '20170904132709-Gliders2016_0-vs-HELIOS2016_0-'
-prefixFiles = '20170905231202-Oxsy_0-vs-HELIOS2016_2-'
-numberTeamGoalie = [7, 1]
+prefixFiles = '20170904132709-Gliders2016_0-vs-HELIOS2016_0-'
+#prefixFiles = '20170905231202-Oxsy_0-vs-HELIOS2016_2-'
+#prefixFiles = '20170905232453-Oxsy_2-vs-HfutEngine2017_2-'
+#numberTeamGoalie = [7, 1]
+numberTeamGoalie = [1, 1]
+#numberTeamGoalie = [7, 1]
 numPeople = 11
 possibleActions = [
   'MoveToOpponentGoal', # Движение к воротам противника

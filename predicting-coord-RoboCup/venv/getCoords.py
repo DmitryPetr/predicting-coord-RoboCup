@@ -1,3 +1,5 @@
+from typing import List
+
 import pandas as pd
 import numpy as np
 from config import teams, pathDefault, prefixFiles, numberTeamGoalie, allLength, gridLen, allWidth, gridWidth
@@ -274,4 +276,26 @@ def getVectorWithObject(dfObject: pd.DataFrame):
     #     lenTT += su
     #print('in getVectorWithObject end : ', lenTT)
     # print('in getVectorWithObject end : ', resultVector.sum())
+    return resultVector
+
+def getInfluenceVectorWithObject(dfOpponentObject: List[int], dfTeamObject: List[int]):
+    resultVector = [0] * (gridLen * gridWidth)
+    # print('in getVectorWithObject start: ', len(dfObject))
+    print('test getInfluenceVectorWithObject start: ', len(dfOpponentObject), len(dfTeamObject))
+    if len(dfOpponentObject) == len(dfTeamObject):
+        for index in range(len(dfOpponentObject)):
+            print('test getInfluenceVectorWithObject index: ', index)
+            opponentVal = dfOpponentObject[index]
+            teamVal = dfTeamObject[index]
+            print('test getInfluenceVectorWithObject value: ', opponentVal, teamVal)
+            if opponentVal <= 0:
+                continue
+            if teamVal <= 0:
+                resultVector[index] = 1
+                continue
+            sumPeople = opponentVal + teamVal
+            if sumPeople > 0 and opponentVal > 0:
+                resultVector[index] = opponentVal/sumPeople
+            print('test resultVector[index]: ', resultVector[index])
+    print('test getInfluenceVectorWithObject end:  ', resultVector)
     return resultVector

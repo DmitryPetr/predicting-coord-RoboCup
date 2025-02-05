@@ -2,6 +2,7 @@ from config import Flags, numPeople
 from getCoords import *
 from saveModule import posPlayer, otherPlayer, Point
 
+
 def readFile(resFlags, resMov):
     for item in teams:
         resFlags[item] = []
@@ -275,3 +276,64 @@ def createDataTickWithPredictVal(param, nowPlayer):
                 param.predictObj[name] = [addObj]
 
     return param.predictObj
+
+class separateObjectFieldOutput:
+    def __init__(self,
+                 resultTestDF,
+                 resultOpponentDF,
+                 resultTeamDF,
+                 xBall,
+                 yBall):
+        self.resultTestDF = resultTestDF
+        self.resultOpponentDF = resultOpponentDF
+        self.resultTeamDF = resultTeamDF
+        self.xBall = xBall
+        self.yBall = yBall
+
+class separateObjectFieldInput:
+    def __init__(self,
+                 name,
+                 value,
+                 nowTeam,
+                 sEnum,
+                 resultTestDF,
+                 resultOpponentDF,
+                 resultTeamDF, xBall, yBall, isPredict):
+        self.name = name
+        self.value = value
+        self.nowTeam = nowTeam
+        self.sEnum = sEnum
+        self.resultTestDF = resultTestDF
+        self.resultOpponentDF = resultOpponentDF
+        self.resultTeamDF = resultTeamDF
+        self.xBall = xBall
+        self.yBall = yBall
+        self.isPredict = isPredict
+
+def separateObjectField(params: separateObjectFieldInput):
+    currStatusTeam = params.sEnum.CurPrT.value if params.isPredict else params.sEnum.CurT.value
+    opponentStatusTeam = params.sEnum.OppPrT.value if params.isPredict else params.sEnum.OppT.value
+    statusPlayer = params.sEnum.Ball.value if 'b dist' in params.name else (currStatusTeam if params.nowTeam in params.name else opponentStatusTeam)
+    # print('item value: ', item, value.x, value.y, value.angle, statusPlayer)
+    currentObj = {
+        'x': params.value.x,
+        'y': params.value.y,
+    }
+    params.resultTestDF = params.resultTestDF.append({
+        **currentObj,
+        'angle': params.value.angle,
+        'statusPlayer': statusPlayer
+    }, ignore_index=True)
+    if statusPlayer == params.sEnum.OppT.value or statusPlayer == params.sEnum.OppPrT.value:
+        # print('in add OppT: ', resultOpponentDF)
+        params.resultOpponentDF = params.resultOpponentDF.append(currentObj, ignore_index=True)
+        # print('in add OppT after: ', resultOpponentDF)
+    if statusPlayer == params.sEnum.CurT.value or statusPlayer == params.sEnum.CurPrT.value:
+        # print('in add CurT: ')
+        params.resultTeamDF = params.resultTeamDF.append(currentObj, ignore_index=True)
+        # print('in add CurT after: ', resultTeamDF)
+    if statusPlayer == params.sEnum.Ball.value:
+        params.xBall = params.value.x
+        params.yBall = params.value.y
+
+    return separateObjectFieldOutput(params.resultTestDF, params.resultOpponentDF, params.resultTeamDF, params.xBall, params.yBall)

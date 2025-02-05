@@ -5,5 +5,5 @@
 /venv/dataCSV
 /venv/__pycache__
 /venv/img
-../example_csv
+/example_csv
 /img
